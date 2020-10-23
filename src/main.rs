@@ -1,4 +1,8 @@
+mod models;
+
+use crate::models::Status;
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
+use std::io;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -11,16 +15,18 @@ async fn echo(req_body: String) -> impl Responder {
 }
 
 async fn index() -> impl Responder {
-  "Hey there!"
+  web::HttpResponse::Ok()
+        .json(Status { status: "Ok".to_string()})
 }
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> io::Result<()> {
+
+    println!("Starting server at http://localhost:8080");
+
     HttpServer::new(|| {
         App::new().service(
-            // prefixes all resources and routes attached to it...
             web::scope("/app")
-                // ...so this handles requests for `GET /app/index.html`
                 .route("/index.html", web::get().to(index)),
         )
     })
